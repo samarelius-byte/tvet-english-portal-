@@ -1,0 +1,65 @@
+<!-- Add to your interface -->
+<div class="screen-share">
+    <button id="start-screen-share">Share Screen</button>
+    <button id="stop-screen-share" style="display: none;">Stop Sharing</button>
+    <div id="screen-share-container"></div>
+</div>
+
+<!-- Add this CSS -->
+<style>
+.screen-share {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+}
+
+#screen-share-container video {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+</style>
+
+<!-- Add this JavaScript -->
+<script>
+let screenStream = null;
+
+document.getElementById('start-screen-share').addEventListener('click', async () => {
+    try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: true
+        });
+        
+        const videoElement = document.createElement('video');
+        videoElement.srcObject = screenStream;
+        videoElement.autoplay = true;
+        
+        document.getElementById('screen-share-container').appendChild(videoElement);
+        document.getElementById('start-screen-share').style.display = 'none';
+        document.getElementById('stop-screen-share').style.display = 'inline-block';
+        
+        // Listen for the user to stop sharing from the browser UI
+        screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+            stopScreenShare();
+        });
+    } catch (error) {
+        console.error('Error sharing screen:', error);
+    }
+});
+
+document.getElementById('stop-screen-share').addEventListener('click', stopScreenShare);
+
+function stopScreenShare() {
+    if (screenStream) {
+        screenStream.getTracks().forEach(track => track.stop());
+        screenStream = null;
+    }
+    
+    document.getElementById('screen-share-container').innerHTML = '';
+    document.getElementById('start-screen-share').style.display = 'inline-block';
+    document.getElementById('stop-screen-share').style.display = 'none';
+}
+</script>

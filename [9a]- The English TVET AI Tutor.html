@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TVET English Portal (Enhanced Demo)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .chat-message, .assignment-card, .course-item {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      max-width: 80%;
+    }
+    .user-message { background-color: #e0f2fe; margin-left: auto; }
+    .bot-message { background-color: #f1f5f9; margin-right: auto; }
+    .assignment-card { background-color: #fff; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s; }
+    .assignment-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .completed { opacity: 0.6; text-decoration: line-through; color: #64748b; }
+    .course-item { background-color: #fff; border: 1px solid #e2e8f0; }
+    .progress-bar {
+      height: 10px;
+      background: #e0e7ff;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #2563eb;
+      width: 0%;
+      transition: width 1s ease;
+    }
+    .quick-btn {
+      @apply bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded text-sm font-medium cursor-pointer transition;
+    }
+    .tab-active {
+      @apply border-b-2 border-blue-600 text-blue-600 font-semibold;
+    }
+    .now-indicator {
+      background-color: #059669;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .quiz-question { @apply bg-white p-5 rounded-lg shadow mb-4; }
+    .career-result { @apply bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg border border-blue-200 mt-4; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-sm border-b">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-blue-600">TVET English Portal</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-sm text-gray-600">Form 1 Student</span>
+      <button id="logoutBtn" class="text-red-500 hover:text-red-700 text-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="mainContainer" class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+  <!-- Sidebar -->
+  <aside class="lg:col-span-1 bg-white rounded-lg shadow p-4">
+    <ul class="space-y-2">
+      <li><a href="#" data-tab="dashboard" class="block p-2 rounded hover:bg-blue-50 font-medium text-blue-700 tab-link active">Dashboard</a></li>
+      <li><a href="#" data-tab="courses" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">My Courses</a></li>
+      <li><a href="#" data-tab="assignments" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">My Assignments</a></li>
+      <li><a href="#" data-tab="progress" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">My Progress</a></li>
+      <li><a href="#" data-tab="schedule" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">My Schedule</a></li>
+      <li><a href="#" data-tab="career" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">Career Engine</a></li>
+      <li><a href="#" data-tab="chatbot" class="block p-2 rounded hover:bg-blue-50 text-gray-700 tab-link">AI English Tutor</a></li>
+    </ul>
+  </aside>
+
+  <!-- Dynamic Content Area -->
+  <main id="contentArea" class="lg:col-span-3 space-y-6">
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="tab-content">
+      <h2 class="text-2xl font-bold mb-4">Welcome, Student!</h2>
+      <p class="text-gray-600 mb-6">Here's your learning overview for today.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-semibold text-gray-700">Courses Enrolled</h3>
+          <p class="text-3xl font-bold text-blue-600">4</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-semibold text-gray-700">Pending Assignments</h3>
+          <p class="text-3xl font-bold text-orange-500">3</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-semibold text-gray-700">Average Score</h3>
+          <p class="text-3xl font-bold text-green-500">78%</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold mb-3">Upcoming Assignments</h3>
+        <ul class="space-y-2">
+          <li class="text-sm">📝 Essay Writing – Due Tomorrow</li>
+          <li class="text-sm">🎧 Listening Quiz – Due in 2 Days</li>
+          <li class="text-sm">📖 Reading Comprehension – Due in 4 Days</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- MY COURSES -->
+    <section id="courses" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">My Courses</h2>
+      <div class="space-y-4">
+
+        <div class="course-item rounded-lg shadow">
+          <h3 class="font-bold">English for C1 (CEFR)</h3>
+          <p class="text-gray-600 text-sm">Advanced grammar, academic writing, critical listening</p>
+          <div class="mt-2 progress-bar"><div class="progress-fill" id="c1Progress" style="width:0%"></div></div>
+          <p class="text-xs text-gray-500 mt-1"><span id="c1Percent">0%</span> Complete</p>
+          <button class="mt-2 text-sm text-blue-600 underline open-lessons" data-course="c1">View Lessons</button>
+          <div id="c1Lessons" class="hidden mt-3 p-3 bg-gray-50 rounded text-sm">
+            <ul class="space-y-1">
+              <li>✅ Present Perfect Continuous</li>
+              <li>✅ Argumentative Essays</li>
+              <li>🟡 Modal Verbs in Academic Writing</li>
+              <li>🟠 Narrative Tenses</li>
+            </ul>
+            <button class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-xs quiz-btn" data-quiz="c1">Take Quiz</button>
+          </div>
+        </div>
+
+        <div class="course-item rounded-lg shadow">
+          <h3 class="font-bold">TVET Communication Skills</h3>
+          <p class="text-gray-600 text-sm">Workplace English, presentations, reports</p>
+          <div class="mt-2 progress-bar"><div class="progress-fill" id="tvetProgress" style="width:0%"></div></div>
+          <p class="text-xs text-gray-500 mt-1"><span id="tvetPercent">0%</span> Complete</p>
+          <button class="mt-2 text-sm text-blue-600 underline open-lessons" data-course="tvet">View Lessons</button>
+          <div id="tvetLessons" class="hidden mt-3 p-3 bg-gray-50 rounded text-sm">
+            <ul class="space-y-1">
+              <li>✅ Email Etiquette</li>
+              <li>✅ Giving Presentations</li>
+              <li>🟡 Report Writing</li>
+            </ul>
+            <button class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-xs quiz-btn" data-quiz="tvet">Take Quiz</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section id="assignments" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">My Assignments</h2>
+      <div class="space-y-3">
+
+        <div class="assignment-card bg-white p-4 rounded-lg shadow" id="essay">
+          <h3 class="font-semibold">Argumentative Essay</h3>
+          <p class="text-sm text-gray-600">Topic: Should schools ban mobile phones?</p>
+          <p class="text-xs text-gray-500 mt-1">Due: 10 Apr 2025</p>
+        </div>
+
+        <div class="assignment-card bg-white p-4 rounded-lg shadow" id="listening">
+          <h3 class="font-semibold">Listening Quiz</h3>
+          <p class="text-sm text-gray-600">Watch video and answer questions</p>
+          <p class="text-xs text-gray-500 mt-1">Due: 12 Apr 2025</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="progress" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">My Progress</h2>
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold mb-3">Weekly Progress Update</h3>
+        <button id="updateProgress" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm mb-4">Simulate Weekly Update</button>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium">C1 English Proficiency</label>
+            <div class="progress-bar mt-1"><div class="progress-fill" id="engBar" style="width:0%"></div></div>
+            <span class="text-xs text-gray-500" id="engLabel">0%</span>
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Vocabulary Mastery</label>
+            <div class="progress-bar mt-1"><div class="progress-fill" id="vocabBar" style="width:0%"></div></div>
+            <span class="text-xs text-gray-500" id="vocabLabel">0%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section id="schedule" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">My Weekly Schedule</h2>
+      <div class="bg-white p-5 rounded-lg shadow">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="py-2">Time</th>
+              <th class="py-2">Mon</th>
+              <th class="py-2">Tue</th>
+              <th class="py-2">Wed</th>
+              <th class="py-2">Thu</th>
+              <th class="py-2">Fri</th>
+            </tr>
+          </thead>
+          <tbody class="text-center text-sm divide-y">
+            <tr>
+              <td class="py-2 font-medium">9:00</td>
+              <td>C1 English</td>
+              <td>TVET Comm</td>
+              <td>C1 English</td>
+              <td>STEAM Vocab</td>
+              <td id="nowSlot">AI Tutor <span class="now-indicator hidden">NOW</span></td>
+            </tr>
+            <tr>
+              <td class="py-2 font-medium">11:00</td>
+              <td></td>
+              <td>Lab</td>
+              <td></td>
+              <td>Project</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CAREER ENGINE -->
+    <section id="career" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">Smart Career Engine</h2>
+      <p class="mb-4 text-gray-600">Answer 3 quick questions to discover your ideal STEAM career.</p>
+      <button id="startCareerBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Start Career Quiz</button>
+
+      <div id="quizContainer" class="hidden mt-4">
+        <div class="quiz-question">
+          <h3>1. What do you enjoy most?</h3>
+          <div class="space-y-2 mt-2">
+            <label><input type="radio" name="q1" value="analytical"> Solving puzzles and analyzing data</label>
+            <label><input type="radio" name="q1" value="creative"> Creating stories and designs</label>
+            <label><input type="radio" name="q1" value="practical"> Fixing things and hands-on work</label>
+          </div>
+        </div>
+
+        <button id="nextQ1" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hidden">Next</button>
+      </div>
+
+      <div id="resultContainer" class="hidden">
+        <div class="career-result">
+          <h3 id="careerTitle" class="font-bold text-lg">Data Scientist</h3>
+          <p id="careerDesc">You have strong analytical and language skills. Data Science combines technical expertise with communication—perfect for TVET learners.</p>
+          <h4 class="font-semibold mt-3">Education Path:</h4>
+          <ul class="list-disc ml-5 text-sm" id="careerPath">
+            <li>SPM with strong Math & English</li>
+            <li>Diploma in Data Science or IT</li>
+            <li>Bachelor’s in Computer Science</li>
+          </ul>
+          <button id="askAdvisorBtn" class="mt-3 text-blue-600 underline text-sm">Ask AI Career Advisor</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHATBOT -->
+    <section id="chatbot" class="tab-content hidden">
+      <h2 class="text-2xl font-bold mb-4">AI English Tutor</h2>
+      <p class="text-gray-600 mb-4">Ask anything about C1 English (or type in Bahasa Malaysia).</p>
+
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="quick-btn" data-query="Explain present perfect continuous">Present Perfect Continuous</span>
+        <span class="quick-btn" data-query="How to write an argumentative essay?">Argumentative Essay</span>
+        <span class="quick-btn" data-query="Berikan contoh narative tense dalam Bahasa Inggeris">Contoh Narrative Tense</span>
+        <span class="quick-btn" data-query="Apa yang dimaksudkan dengan ayat majmuk, beserta contohnya?">Ayat Majmuk (BM)</span>
+      </div>
+
+      <div id="chatContainer" class="bg-white p-4 rounded-lg shadow h-80 overflow-y-auto mb-3 border"></div>
+
+      <div class="flex">
+        <input id="userInput" type="text" placeholder="Type your question..." class="flex-grow p-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        <button id="sendBtn" class="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700">Send</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Tab Navigation
+  document.querySelectorAll('.tab-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = e.target.dataset.tab;
+      document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('.tab-link').forEach(el => {
+        el.classList.remove('tab-active');
+        el.classList.replace('text-blue-700', 'text-gray-700');
+      });
+      e.target.classList.add('tab-active');
+    });
+  });
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    if (confirm("Logout?")) alert("Logged out successfully.");
+  });
+
+  // === COURSES: Expand & Simulate Progress ===
+  document.querySelectorAll('.open-lessons').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const course = this.dataset.course;
+      document.getElementById(`${course}Lessons`).classList.toggle('hidden');
+    });
+  });
+
+  document.querySelectorAll('.quiz-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const course = this.dataset.quiz;
+      alert(`🎉 Quiz completed for ${course.toUpperCase()}! +15 XP earned.`);
+      // Simulate progress
+      const bar = document.getElementById(`${course}Progress`);
+      const percent = document.getElementById(`${course}Percent`);
+      bar.style.width = '100%';
+      percent.textContent = '100%';
+    });
+  });
+
+  // === ASSIGNMENTS: Mark as Complete ===
+  document.querySelectorAll('.assignment-card').forEach(card => {
+    card.addEventListener('click', function () {
+      if (!this.classList.contains('completed')) {
+        this.classList.add('completed');
+        setTimeout(() => alert("✅ Assignment marked as complete!"), 100);
+      }
+    });
+  });
+
+  // === PROGRESS: Simulate Weekly Update ===
+  document.getElementById('updateProgress').addEventListener('click', () => {
+    const eng = Math.floor(Math.random() * 30) + 60;
+    const vocab = Math.floor(Math.random() * 25) + 65;
+
+    document.getElementById('engBar').style.width = eng + '%';
+    document.getElementById('engLabel').textContent = eng + '%';
+
+    document.getElementById('vocabBar').style.width = vocab + '%';
+    document.getElementById('vocabLabel').textContent = vocab + '%';
+
+    alert(`📊 Weekly progress updated!\nEnglish: ${eng}%\nVocabulary: ${vocab}%`);
+  });
+
+  // === SCHEDULE: Highlight "Now" ===
+  function highlightCurrentTime() {
+    const now = new Date();
+    const day = now.getDay(); // 1=Mon ... 5=Fri
+    const hour = now.getHours();
+    const slot = document.getElementById('nowSlot');
+
+    // Only show "NOW" on Friday at 9am (demo)
+    if (day === 5 && hour === 9) {
+      document.querySelector('#schedule .now-indicator').classList.remove('hidden');
+    }
+  }
+  highlightCurrentTime();
+
+  // === CAREER ENGINE ===
+  document.getElementById('startCareerBtn').addEventListener('click', () => {
+    document.getElementById('quizContainer').classList.remove('hidden');
+    document.getElementById('startCareerBtn').classList.add('hidden');
+    document.getElementById('nextQ1').classList.remove('hidden');
+  });
+
+  document.getElementById('nextQ1').addEventListener('click', () => {
+    const selected = document.querySelector('input[name="q1"]:checked');
+    if (!selected) {
+      alert("Please select an option.");
+      return;
+    }
+
+    document.getElementById('quizContainer').classList.add('hidden');
+    document.getElementById('resultContainer').classList.remove('hidden');
+
+    const value = selected.value;
+    const title = document.getElementById('careerTitle');
+    const desc = document.getElementById('careerDesc');
+    const path = document.getElementById('careerPath');
+
+    if (value === 'analytical') {
+      title.textContent = "Data Scientist";
+      desc.textContent = "Your logical thinking and language skills make you perfect for data roles in TVET industries.";
+      path.innerHTML = `<li>SPM with A in Math & English</li><li>Diploma in Data Analytics</li><li>Job: Junior Data Analyst</li>`;
+    } else if (value === 'creative') {
+      title.textContent = "Technical Writer";
+      desc.textContent = "You can explain complex ideas clearly — ideal for manuals, reports, and digital content.";
+      path.innerHTML = `<li>SPM with strong English</li><li>Diploma in Communication</li><li>Job: Documentation Specialist</li>`;
+    } else {
+      title.textContent = "Engineering Technician";
+      desc.textContent = "Hands-on problem solver? You’ll thrive in technical fields like robotics or automation.";
+      path.innerHTML = `<li>SPM with Physics & English</li><li>Diploma in Mechatronics</li><li>Job: Field Technician</li>`;
+    }
+  });
+
+  document.getElementById('askAdvisorBtn').addEventListener('click', () => {
+    activateTab('chatbot');
+    const career = document.getElementById('careerTitle').textContent;
+    document.getElementById('userInput').value = `I was recommended to become a ${career}. What English skills should I focus on?`;
+    simulateSend();
+  });
+
+  function activateTab(tabId) {
+    document.querySelectorAll(`[data-tab="${tabId}"]`)[0].click();
+  }
+
+  // === CHATBOT (Same Mock AI as Before) ===
+  const mockResponses = {
+    "present perfect continuous": `
+      <h3>Present Perfect Continuous</h3>
+      <p><strong>Formula:</strong> Subject + has/have + been + verb-ing</p>
+      <p>Used for actions that started in the past and are still continuing, or recently stopped.</p>
+      <ul>
+        <li><em>I have been studying English for two years.</em></li>
+        <li><em>She has been working on her project since morning.</em></li>
+      </ul>
+      <p><strong>Tip:</strong> Often used with <em>for</em>, <em>since</em>, <em>all day</em>.</p>
+    `,
+    "modal verbs": `
+      <h3>Modal Verbs</h3>
+      <p>Express ability, permission, obligation, or possibility.</p>
+      <ul>
+        <li><strong>Can:</strong> I can swim.</li>
+        <li><strong>Must:</strong> You must wear a helmet.</li>
+        <li><strong>Should:</strong> You should revise.</li>
+      </ul>
+    `,
+    "argumentative essay": `
+      <h3>Argumentative Essay Guide</h3>
+      <ol>
+        <li><strong>Introduction:</strong> Hook + thesis</li>
+        <li><strong>Body:</strong> Evidence + analysis</li>
+        <li><strong>Counterargument:</strong> Address opposition</li>
+        <li><strong>Conclusion:</strong> Call to action</li>
+      </ol>
+    `,
+    "narrative tense": `
+      <h3>Narrative Tenses</h3>
+      <p>Use <strong>Past Simple</strong> and <strong>Past Continuous</strong> to tell stories.</p>
+      <ul>
+        <li><em>She went to the beach. The sun was shining.</em></li>
+        <li><em>When I arrived, they were playing.</em></li>
+      </ul>
+    `,
+    "ayat majmuk": `
+      <h3>Ayat Majmuk (BM)</h3>
+      <p>Ayat yang mempunyai dua klausa, contoh:</p>
+      <ul>
+        <li><em>Saya belajar <strong>kerana</strong> saya mahu lulus.</em></li>
+        <li><em>Dia datang awal <strong>supaya</strong> dia tidak terlewat.</em></li>
+      </ul>
+      <p>Kata hubung: <strong>dan, tetapi, kerana, jika, supaya</strong>.</p>
+    `,
+    "default": `<p>Great question! Let me explain <em><strong>{query}</strong></em> at C1 level. Would you like examples or a quiz next?</p>`
+  };
+
+  const chatContainer = document.getElementById("chatContainer");
+  const userInput = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  function addMessageToChat(message, isUser) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("chat-message", isUser ? "user-message" : "bot-message");
+    messageDiv.innerHTML = isUser ? message : message;
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function getMockResponse(userMessage) {
+    const lowerMsg = userMessage.toLowerCase();
+    for (const [key, response] of Object.entries(mockResponses)) {
+      if (lowerMsg.includes(key)) return response;
+    }
+    return mockResponses.default.replace("{query}", userMessage);
+  }
+
+  function simulateSend() {
+    const msg = document.querySelector('.quick-btn').dataset.query;
+    userInput.value = msg;
+    sendMessage();
+  }
+
+  function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+    addMessageToChat(message, true);
+    userInput.value = "";
+    setTimeout(() => {
+      const botResponse = getMockResponse(message);
+      addMessageToChat(botResponse, false);
+    }, 600);
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  userInput.addEventListener("keypress", e => e.key === "Enter" && sendMessage());
+  document.querySelectorAll('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      userInput.value = btn.dataset.query;
+      sendMessage();
+    });
+  });
+
+  // On Load
+  document.querySelector('[data-tab="dashboard"]').click();
+</script>
+
+</body>
+</html>

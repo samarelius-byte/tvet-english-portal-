@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEAM Malaysia - ESG/SDG Impact Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d2b4b 0%, #1a4e7a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .esg-portal {
+            display: flex;
+            width: 100%;
+            max-width: 1600px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            height: 700px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, #1a4e7a, #0d2b4b);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo h2 {
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .nav-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            background-color: #f5f7fb;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #1a4e7a;
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #1a4e7a, #0d2b4b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            color: #1a4e7a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: #4caf50;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1a4e7a;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .sdg-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .sdg-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: transform 0.3s;
+        }
+
+        .sdg-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sdg-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .sdg-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .sdg-progress {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .sdg-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-item {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .metric-title {
+            font-weight: 600;
+            color: #1a4e7a;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .positive {
+            color: #4caf50;
+        }
+
+        .negative {
+            color: #f44336;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        .full-width {
+            grid-column: span 3;
+        }
+
+        .half-width {
+            grid-column: span 2;
+        }
+
+        .chatbot-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            grid-column: span 2;
+        }
+
+        .chat-header {
+            background: linear-gradient(to right, #1a4e7a, #0d2b4b);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-controls button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #f9fafc;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #1a4e7a;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #e8ebf0;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-action-btn {
+            background: rgba(26, 78, 122, 0.1);
+            border: none;
+            border-radius: 15px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            color: #1a4e7a;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(26, 78, 122, 0.2);
+        }
+
+        .chat-input {
+            padding: 15px;
+            background-color: white;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .chat-input input:focus {
+            border-color: #1a4e7a;
+        }
+
+        .send-button {
+            background: linear-gradient(to right, #1a4e7a, #0d2b4b);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background-color: #e8ebf0;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 5px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-of-type(1) {
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(2) {
+            animation: typing 1s 0.33s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(3) {
+            animation: typing 1s 0.66s infinite;
+        }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .api-status {
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 5px;
+            background-color: #4caf50;
+            color: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .impact-report {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .report-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .report-title {
+            font-weight: 600;
+            color: #1a4e7a;
+        }
+
+        .report-date {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .download-btn {
+            background: #1a4e7a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .esg-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 15px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+        }
+
+        .score-rating {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="esg-portal">
+        <div class="sidebar">
+            <div class="logo">
+                <h2>STEAM Impact</h2>
+                <p>ESG/SDG Dashboard</p>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-globe-americas"></i>
+                <span>SDG Tracking</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-leaf"></i>
+                <span>Environmental</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Social Impact</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-balance-scale"></i>
+                <span>Governance</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-robot"></i>
+                <span>AI Advisor</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1>ESG/SDG Impact Dashboard</h1>
+                <div class="user-info">
+                    <div class="user-avatar">SM</div>
+                    <span>STEAM Malaysia</span>
+                </div>
+            </div>
+            
+            <div class="content-area">
+                <div class="card">
+                    <h3><i class="fas fa-globe-americas"></i> SDG Alignment</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value">9</div>
+                            <div class="stat-label">SDGs Impacted</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">78%</div>
+                            <div class="stat-label">Alignment</div>
+                        </div>
+                    </div>
+                    <div class="sdg-grid">
+                        <div class="sdg-item">
+                            <div class="sdg-icon" style="background-color: #e5243b;">
+                                <span>4</span>
+                            </div>
+                            <div class="sdg-name">Quality Education</div>
+                            <div class="sdg-progress">
+                                <div class="sdg-progress-bar" style="width: 92%; background-color: #e5243b;"></div>
+                            </div>
+                        </div>
+                        <div class="sdg-item">
+                            <div class="sdg-icon" style="background-color: #c5192d;">
+                                <span>5</span>
+                            </div>
+                            <div class="sdg-name">Gender Equality</div>
+                            <div class="sdg-progress">
+                                <div class="sdg-progress-bar" style="width: 85%; background-color: #c5192d;"></div>
+                            </div>
+                        </div>
+                        <div class="sdg-item">
+                            <div class="sdg-icon" style="background-color: #3f7e44;">
+                                <span>9</span>
+                            </div>
+                            <div class="sdg-name">Industry & Innovation</div>
+                            <div class="sdg-progress">
+                                <div class="sdg-progress-bar" style="width: 88%; background-color: #3f7e44;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-chart-pie"></i> Impact Metrics</h3>
+                    <div class="impact-metrics">
+                        <div class="metric-item">
+                            <div class="metric-title">Carbon Reduction</div>
+                            <div class="metric-value">42.5 t</div>
+                            <div class="metric-change positive">+12% vs last year</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Students Reached</div>
+                            <div class="metric-value">5,240</div>
+                            <div class="metric-change positive">+28% vs last year</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Female Participation</div>
+                            <div class="metric-value">47%</div>
+                            <div class="metric-change positive">+5% vs last year</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Community Projects</div>
+                            <div class="metric-value">36</div>
+                            <div class="metric-change positive">+9% vs last year</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-star"></i> ESG Score</h3>
+                    <div class="esg-score">
+                        <div class="score-value">82</div>
+                        <div class="score-label">Overall ESG Score</div>
+                        <div class="score-rating">Excellent</div>
+                    </div>
+                    <div class="stats" style="margin-top: 15px;">
+                        <div class="stat-item">
+                            <div class="stat-value">85</div>
+                            <div class="stat-label">Environmental</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">81</div>
+                            <div class="stat-label">Social</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">80</div>
+                            <div class="stat-label">Governance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card half-width">
+                    <h3><i class="fas fa-seedling"></i> Environmental Impact</h3>
+                    <div class="chart-container">
+                        <canvas id="environmentChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-file-alt"></i> Recent Reports</h3>
+                    <div class="impact-report">
+                        <div class="report-item">
+                            <div class="report-info">
+                                <div class="report-title">Annual Sustainability Report</div>
+                                <div class="report-date">June 2023</div>
+                            </div>
+                            <button class="download-btn">Download</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-info">
+                                <div class="report-title">Carbon Footprint Analysis</div>
+                                <div class="report-date">April 2023</div>
+                            </div>
+                            <button class="download-btn">Download</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-info">
+                                <div class="report-title">Social Impact Assessment</div>
+                                <div class="report-date">March 2023</div>
+                            </div>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card full-width">
+                    <h3><i class="fas fa-chart-line"></i> Impact Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chatbot-container">
+                    <div class="chat-header">
+                        <h2>ESG/SDG Advisor</h2>
+                        <div class="header-controls">
+                            <button id="minimize-btn"><i class="fas fa-minus"></i></button>
+                            <button id="close-btn"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="api-status">
+                        API Connected Successfully - Using DeepSeek Model
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            Hello! I'm your ESG/SDG advisor. How can I help you with sustainability impact tracking today?
+                            <div class="message-time">Just now</div>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" data-action="SDG alignment recommendations">SDG recommendations</button>
+                                <button class="quick-action-btn" data-action="ESG improvement strategies">ESG strategies</button>
+                                <button class="quick-action-btn" data-action="Impact measurement">Impact measurement</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="user-input" placeholder="Ask about ESG metrics, SDG alignment, or impact reporting...">
+                        <button class="send-button" id="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const minimizeBtn = document.getElementById('minimize-btn');
+            const closeBtn = document.getElementById('close-btn');
+            
+            // API configuration
+            const API_KEY = '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';
+            const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+            
+            // Environmental Impact Chart
+            const envCtx = document.getElementById('environmentChart').getContext('2d');
+            const environmentChart = new Chart(envCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Carbon Reduction', 'Energy Savings', 'Waste Reduction', 'Water Conservation'],
+                    datasets: [{
+                        data: [42, 28, 18, 12],
+                        backgroundColor: [
+                            '#4caf50',
+                            '#8bc34a',
+                            '#cddc39',
+                            '#ffeb3b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Impact Over Time Chart
+            const impactCtx = document.getElementById('impactChart').getContext('2d');
+            const impactChart = new Chart(impactCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Carbon Reduction (t)',
+                            data: [12, 19, 15, 22, 18, 24, 20, 26, 30, 35, 38, 42.5],
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Students Reached',
+                            data: [1200, 1850, 2100, 2450, 2800, 3200, 3600, 4000, 4350, 4700, 5000, 5240],
+                            borderColor: '#2196f3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Conversation history
+            let conversationHistory = [
+                {
+                    role: "system",
+                    content: "You are a helpful ESG/SDG advisor for STEAM Malaysia. Your role is to help track and improve environmental, social, and governance impact, align with Sustainable Development Goals, and provide insights on sustainability metrics. Always respond in a professional and informative manner."
+                }
+            ];
+            
+            // Add message to chat
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                
+                const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                messageDiv.innerHTML = `${text}<div class="message-time">${time}</div>`;
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Add to conversation history
+                conversationHistory.push({
+                    role: isUser ? "user" : "assistant",
+                    content: text
+                });
+            }
+            
+            // Show typing indicator
+            function showTypingIndicator() {
+                typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Hide typing indicator
+            function hideTypingIndicator() {
+                typingIndicator.style.display = 'none';
+            }
+            
+            // Generate response using API
+            async function generateResponse(userMessage) {
+                try {
+                    // Add user message to conversation history
+                    conversationHistory.push({
+                        role: "user",
+                        content: userMessage
+                    });
+                    
+                    const response = await fetch(API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${API_KEY}`,
+                            "HTTP-Referer": "https://steam-malaysia-esg.com", 
+                            "X-Title": "STEAM Malaysia ESG/SDG Dashboard",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "model": "deepseek/deepseek-chat-v3.1:free",
+                            "messages": conversationHistory,
+                            "temperature": 0.7,
+                            "max_tokens": 1000
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        return `Error: ${data.error.message}`;
+                    }
+                    
+                    if (data.choices && data.choices.length > 0) {
+                        return data.choices[0].message.content;
+                    } else {
+                        return "I'm sorry, I didn't understand that. Could you try rephrasing your question?";
+                    }
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return "I'm having trouble connecting right now. Please try again in a moment.";
+                }
+            }
+            
+            // Handle user message
+            async function handleUserMessage() {
+                const message = userInput.value.trim();
+                
+                if (message === '') return;
+                
+                // Add user message to chat
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    // Generate response using API
+                    const response = await generateResponse(message);
+                    hideTypingIndicator();
+                    addMessage(response, false);
+                } catch (error) {
+                    hideTypingIndicator();
+                    addMessage("Sorry, I encountered an error processing your request. Please try again.", false);
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', handleUserMessage);
+            
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleUserMessage();
+                }
+            });
+            
+            // Quick action buttons
+            document.querySelectorAll('.quick-action-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    userInput.value = action;
+                    handleUserMessage();
+                });
+            });
+            
+            minimizeBtn.addEventListener('click', function() {
+                const chatBody = document.querySelector('.chat-messages');
+                const chatInput = document.querySelector('.chat-input');
+                const typingIndicator = document.getElementById('typing-indicator');
+                
+                if (chatBody.style.display === 'none') {
+                    chatBody.style.display = 'flex';
+                    chatInput.style.display = 'flex';
+                    typingIndicator.style.display = 'none';
+                    minimizeBtn.innerHTML = '<i class="fas fa-minus"></i>';
+                } else {
+                    chatBody.style.display = 'none';
+                    chatInput.style.display = 'none';
+                    typingIndicator.style.display = 'none';
+                    minimizeBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                }
+            });
+            
+            closeBtn.addEventListener('click', function() {
+                const confirmed = confirm('Are you sure you want to clear the chat?');
+                if (confirmed) {
+                    // Clear chat but keep welcome message
+                    const welcomeMsg = document.querySelector('.bot-message');
+                    chatMessages.innerHTML = '';
+                    chatMessages.appendChild(welcomeMsg);
+                    
+                    // Reset conversation history
+                    conversationHistory = [
+                        {
+                            role: "system",
+                            content: "You are a helpful ESG/SDG advisor for STEAM Malaysia. Your role is to help track and improve environmental, social, and governance impact, align with Sustainable Development Goals, and provide insights on sustainability metrics. Always respond in a professional and informative manner."
+                        }
+                    ];
+                    
+                    // Add a new bot message
+                    addMessage("Hello again! How can I help with your ESG/SDG initiatives today?", false);
+                }
+            });
+            
+            // Add event listeners to download buttons
+            document.querySelectorAll('.download-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const reportTitle = this.closest('.report-item').querySelector('.report-title').textContent;
+                    userInput.value = `Tell me more about the ${reportTitle} and its key findings.`;
+                    handleUserMessage();
+                });
+            });
+            
+            // Add some sample messages after a delay to simulate a conversation starter
+            setTimeout(() => {
+                addMessage("I can help you track ESG metrics, align with SDGs, generate sustainability reports, and identify areas for improvement. What would you like to know?", false);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

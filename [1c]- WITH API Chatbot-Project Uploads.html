@@ -1,0 +1,78 @@
+<!-- Add to your interface -->
+<div class="project-submission">
+    <h3>Submit STEAM Project</h3>
+    <input type="text" id="project-title" placeholder="Project Title">
+    <textarea id="project-description" placeholder="Project Description"></textarea>
+    <input type="file" id="project-files" multiple>
+    <button id="submit-project">Submit Project</button>
+</div>
+
+<!-- Add this CSS -->
+<style>
+.project-submission {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+}
+
+.project-submission h3 {
+    margin-bottom: 15px;
+    color: #4a00e0;
+}
+
+.project-submission input,
+.project-submission textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.project-submission textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+#submit-project {
+    background: linear-gradient(to right, #4a00e0, #8e2de2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+</style>
+
+<!-- Add this JavaScript -->
+<script>
+document.getElementById('submit-project').addEventListener('click', function() {
+    const title = document.getElementById('project-title').value;
+    const description = document.getElementById('project-description').value;
+    const files = document.getElementById('project-files').files;
+    
+    if (!title || !description) {
+        alert('Please provide a title and description for your project');
+        return;
+    }
+    
+    // In a real implementation, you would send this data to your backend
+    // For now, we'll simulate a submission
+    simulateProjectSubmission(title, description, files);
+});
+
+function simulateProjectSubmission(title, description, files) {
+    showTypingIndicator();
+    
+    setTimeout(() => {
+        hideTypingIndicator();
+        
+        addMessage(`Thank you for submitting your project "${title}"! I've received your ${files.length} file(s) and will provide feedback soon.`, false);
+        
+        // Clear the form
+        document.getElementById('project-title').value = '';
+        document.getElementById('project-description').value = '';
+        document.getElementById('project-files').value = '';
+    }, 1500);
+}
+</script>
